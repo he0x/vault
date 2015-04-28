@@ -3,6 +3,7 @@ package token
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -20,7 +21,11 @@ func HelperPath(path string) string {
 	// Get the binary name. If it isn't absolute, prepend "vault token-"
 	binary := path[0:space]
 	if !filepath.IsAbs(binary) {
-		binary = "vault token-" + binary
+		vault, err := filepath.Abs(os.Args[0])
+		if err != nil {
+			panic(fmt.Sprintf("error finding directory: %s", err))
+		}
+		binary = vault + " token-" + binary
 	}
 
 	// Return the resulting string
